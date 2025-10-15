@@ -1,0 +1,125 @@
+<section>
+  
+  <p *ngIf="loading">A carregar...</p>
+  <p *ngIf="error" style="color:crimson">{{ error }}</p>
+
+  <!-- Filters -->
+  <form class="filters" (submit)="onSearch(); $event.preventDefault()">
+    <div class="row two-lines">
+      <!-- Line 1 -->
+      <label>
+        <span>Marca</span>
+        <input type="text" [(ngModel)]="make" name="make" placeholder="Ex.: BMW, Audi" aria-label="Marca" />
+      </label>
+      <label>
+        <span>Modelo</span>
+        <input type="text" [(ngModel)]="model" name="model" placeholder="Ex.: A3, Série 1" aria-label="Modelo" />
+      </label>
+      <label>
+        <span>Preço de</span>
+        <input type="number" [(ngModel)]="price_min" name="price_min" inputmode="numeric" placeholder="€" aria-label="Preço mínimo" />
+      </label>
+      <label>
+        <span>Preço até</span>
+        <input type="number" [(ngModel)]="price_max" name="price_max" inputmode="numeric" placeholder="€" aria-label="Preço máximo" />
+      </label>
+
+      <!-- Line 2 -->
+      <ng-container *ngIf="showMoreFilters">
+      <label>
+        <span>Ano de</span>
+        <input type="number" [(ngModel)]="year_min" name="year_min" inputmode="numeric" placeholder="2005" aria-label="Ano mínimo" />
+      </label>
+      <label>
+        <span>Ano até</span>
+        <input type="number" [(ngModel)]="year_max" name="year_max" inputmode="numeric" placeholder="2023" aria-label="Ano máximo" />
+      </label>
+      <label>
+        <span>Ordenar por</span>
+        <select [(ngModel)]="sort" name="sort" aria-label="Ordenar por">
+          <option value="price">Preço</option>
+          <option value="mileage">Quilometragem</option>
+          <option value="year">Ano</option>
+          <option value="id">Recentes</option>
+        </select>
+      </label>
+      <label>
+        <span>Ordem</span>
+        <select [(ngModel)]="direction" name="direction" aria-label="Ordem">
+          <option value="asc">Ascendente</option>
+          <option value="desc">Descendente</option>
+        </select>
+      </label>
+      </ng-container>
+      <div class="actions">
+        <button mat-flat-button color="primary" type="submit">Pesquisar</button>
+        <button mat-stroked-button type="button" (click)="onReset()">Limpar</button>
+        <button mat-stroked-button type="button" (click)="toggleFilters()" [attr.aria-expanded]="showMoreFilters ? 'true' : 'false'">{{ showMoreFilters ? 'Menos filtros' : 'Mais filtros' }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Featured car -->
+  <div class="featured" *ngIf="featured as f">
+    <mat-card class="featured-card">
+      <div class="f-wrap">
+        <div class="f-thumb" [routerLink]="['/cars', f.id]" role="link" tabindex="0">
+          <img *ngIf="f.images?.length; else noFImage" [src]="f.images![0] || ''" alt="featured car image" />
+          <ng-template #noFImage>
+            <svg class="placeholder" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" aria-label="No image available">
+              <defs>
+                <linearGradient id="fgrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f3f4f6"/>
+                  <stop offset="100%" stop-color="#e5e7eb"/>
+                </linearGradient>
+              </defs>
+              <rect width="300" height="180" fill="url(#fgrad)" rx="8"/>
+            </svg>
+          </ng-template>
+          <div class="badge">Oportunidade da Semana</div>
+        </div>
+        <div class="f-meta">
+          <h3>{{ f.title || (f.make + ' ' + f.model) }}</h3>
+          <div class="sub">{{ f.make }} {{ f.model }}</div>
+          <div class="price" *ngIf="f.price != null">{{ f.price }} {{ f.currency || '' }}</div>
+          <div class="actions">
+            <a mat-stroked-button color="primary" [routerLink]="['/cars', f.id]">Ver</a>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="grid" *ngIf="!loading && cars?.length">
+    <mat-card class="car-card" *ngFor="let car of cars">
+      <div class="thumb" [routerLink]="['/cars', car.id]" role="link" tabindex="0">
+        <img *ngIf="car.images?.length; else noImage" [src]="car.images![0] || ''" alt="car image" />
+        <ng-template #noImage>
+          <svg class="placeholder" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" aria-label="No image available">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f3f4f6"/>
+                <stop offset="100%" stop-color="#e5e7eb"/>
+              </linearGradient>
+            </defs>
+            <rect width="200" height="120" fill="url(#grad)" rx="8"/>
+            <g fill="#9ca3af">
+              <path d="M60 85h80a5 5 0 0 0 5-5V40a5 5 0 0 0-5-5H60a5 5 0 0 0-5 5v40a5 5 0 0 0 5 5zm0-10 20-20 15 15 10-10 35 35H60z"/>
+              <circle cx="115" cy="55" r="7"/>
+            </g>
+          </svg>
+        </ng-template>
+      </div>
+      <mat-card-content>
+        <h3>{{ car.title || (car.make + ' ' + car.model) }}</h3>
+        <div class="sub">{{ car.make }} {{ car.model }}</div>
+        <div class="price" *ngIf="car.price != null">{{ car.price }} {{ car.currency || '' }}</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-stroked-button color="primary" [routerLink]="['/cars', car.id]">Ver</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <p *ngIf="!loading && (!cars || cars.length === 0)">Sem resultados.</p>
+</section>

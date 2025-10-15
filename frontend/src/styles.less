@@ -1,0 +1,92 @@
+/* Angular Material prebuilt theme */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Global theme tokens (light/dark) */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --text: #111827; /* slate-900 */
+  --muted: #6b7280; /* gray-500 */
+  --border: #e5e7eb; /* gray-200 */
+  /* Warm accent across the site */
+  --accent: #f97316; /* orange-500 */
+  --accent-contrast: #ffffff;
+  --link: var(--accent);
+  --pill-bg: #fff1e6; /* warm tint */
+  --pill-fg: #b45309; /* orange-700 */
+  --footer-bg: #fafafa;
+  --hero1: #e5e7eb;
+  --hero2: #f9fafb;
+  /* Alternating section backgrounds (light) */
+  --section-bg-odd: #ffffff; /* surface */
+  --section-bg-even: #f1f5f9; /* stronger tint for visibility */
+
+  /* Chip/badge tokens (about section) */
+  --chip-bg: #fff7ed;      /* orange-50 */
+  --chip-fg: #9a3412;      /* orange-900 */
+  --chip-border: #fed7aa;  /* orange-200 */
+}
+
+.theme-dark, [data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0f19; /* near-black navy */
+  --surface: #0f172a; /* slate-900 */
+  --text: #e5e7eb; /* gray-200 */
+  --muted: #9ca3af; /* gray-400 */
+  --border: #1f2937; /* gray-800 */
+  --accent: #fb923c; /* orange-400 for dark */
+  --accent-contrast: #0b0f19;
+  --link: var(--accent);
+  --pill-bg: #2b1a10; /* warm dark tint */
+  --pill-fg: #fdba74; /* orange-300 */
+  --footer-bg: #0b0f19;
+  --hero1: #0b0f19;
+  --hero2: #111827;
+  /* Alternating section backgrounds (dark) */
+  --section-bg-odd: #0f172a; /* surface */
+  --section-bg-even: #0a1220; /* darker to increase contrast */
+
+  /* Chip/badge tokens (about section) */
+  --chip-bg: #2b1a10;      /* warm dark */
+  --chip-fg: #fdba74;      /* orange-300 */
+  --chip-border: #7c2d12;  /* deeper orange */
+}
+
+/* Base */
+html, body { height: 100%; }
+html { overflow-x: hidden; overscroll-behavior: none; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  /* Professional system font stack with Apple focus */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global link color to follow accent */
+a { color: var(--link); }
+a:hover { filter: brightness(1.1); }
+
+/* Material surface alignment */
+.mat-mdc-card, .mdc-card { background-color: var(--surface) !important; color: var(--text) !important; }
+.mdc-elevated-card { background-color: var(--surface) !important; }
+/* Buttons keep Material theme colors; accent adapts via custom .btn */
+
+/* Accent overrides for Angular Material primary variants */
+.mat-mdc-unelevated-button.mat-primary,
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-fab.mat-primary,
+.mat-mdc-mini-fab.mat-primary {
+  background-color: var(--accent) !important;
+  color: var(--accent-contrast) !important;
+}
+.mat-mdc-outlined-button.mat-primary {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+.mat-mdc-stroked-button.mat-primary { border-color: var(--accent) !important; color: var(--accent) !important; }
+.mat-mdc-icon-button.mat-primary { color: var(--accent) !important; }

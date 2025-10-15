@@ -1,0 +1,25 @@
+<section>
+  <h2>Bulk Create / Import</h2>
+  <p *ngIf="error" style="color:crimson">{{ error }}</p>
+
+  <div style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;">
+    <div>
+      <h3>Paste JSON array</h3>
+      <textarea [(ngModel)]="jsonText" rows="16" style="width:100%"></textarea>
+      <div style="margin-top:.5rem; display:flex; gap:.5rem;">
+        <button class="pill" (click)="createBulk()" [disabled]="creating">{{ creating ? 'Creating…' : 'Create' }}</button>
+        <a class="pill" routerLink="/cars">Back</a>
+      </div>
+    </div>
+    <div>
+      <h3>Import from file</h3>
+      <input type="file" (change)="onFileChange($event)" accept="application/json" />
+      <div style="margin-top:.5rem; display:flex; gap:.5rem;">
+        <button class="pill" (click)="importFile()" [disabled]="importing || !file">{{ importing ? 'Importing…' : 'Import' }}</button>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="resultCount !== undefined" style="margin-top:1rem;">Done: {{ resultCount }} cars.</p>
+</section>
+

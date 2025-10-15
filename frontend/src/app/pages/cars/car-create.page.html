@@ -1,0 +1,32 @@
+<section>
+  <h2>Create Car</h2>
+  <p *ngIf="error" style="color:crimson">{{ error }}</p>
+  <form [formGroup]="form" (ngSubmit)="submit()" style="display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; max-width: 900px;">
+    <label>URL <input type="url" formControlName="url" /></label>
+    <label>Title <input type="text" formControlName="title" /></label>
+    <label>Make * <input type="text" formControlName="make" required /></label>
+    <label>Model * <input type="text" formControlName="model" required /></label>
+    <label>Version <input type="text" formControlName="version" /></label>
+    <label>Color <input type="text" formControlName="color" /></label>
+    <label>Doors <input type="number" formControlName="doors" /></label>
+    <label>Seats <input type="number" formControlName="seats" /></label>
+    <label>Engine (cc) <input type="number" formControlName="engine_capacity_cc" /></label>
+    <label>Power (cv) <input type="number" formControlName="engine_power_cv" /></label>
+    <label>Fuel <input type="text" formControlName="fuel_type" /></label>
+    <label>Body Type <input type="text" formControlName="body_type" /></label>
+    <label>Gearbox <input type="text" formControlName="gearbox" /></label>
+    <label>Transmission <input type="text" formControlName="transmission" /></label>
+    <label>Mileage (km) <input type="number" formControlName="mileage_km" /></label>
+    <label>Reg. Month <input type="text" formControlName="registration_month" /></label>
+    <label>Reg. Year <input type="number" formControlName="registration_year" /></label>
+    <label>Price <input type="number" formControlName="price" step="0.01" /></label>
+    <label>Currency <input type="text" formControlName="currency" /></label>
+    <label style="grid-column: 1 / -1;">Images (comma-separated URLs) <input type="text" formControlName="images" /></label>
+
+    <div style="grid-column: 1 / -1; display:flex; gap:.5rem;">
+      <button class="pill" type="submit" [disabled]="saving || form.invalid">{{ saving ? 'Saving…' : 'Save' }}</button>
+      <a class="pill" routerLink="/cars">Cancel</a>
+    </div>
+  </form>
+</section>
+

@@ -1,0 +1,55 @@
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" routerLink="/" aria-label="Início">
+      <img src="/logo_car.png" alt="Logo do Stand" class="logo" />
+      <span>StandAutomóveis</span>
+    </a>
+    <nav class="main-nav">
+      <a routerLink="/cars">Carros Usados</a>
+      <a [routerLink]="['/']" fragment="sobre">Sobre</a>
+      <a [routerLink]="['/']" fragment="contactos">Contactos</a>
+    </nav>
+    <button
+      type="button"
+      class="icon-btn theme-toggle"
+      (click)="toggleTheme()"
+      [attr.aria-label]="theme() === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'"
+      [attr.title]="theme() === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'"
+    >
+      {{ theme() === 'dark' ? '☀️' : '🌙' }}
+    </button>
+    <div class="cta">
+      <a class="btn" [routerLink]="['/']" fragment="contactos">Contactar</a>
+    </div>
+  </div>
+  <div class="shadow"></div>
+  <div class="spacer" aria-hidden="true"></div>
+</header>
+
+<main class="site-main">
+  <div class="container">
+    <router-outlet />
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container foot">
+    <div class="foot-brand">
+      <img src="/logo_car.png" alt="Logo do Stand" class="logo small" />
+      <span>© {{ year }} StandAutomóveis – Todos os direitos reservados</span>
+    </div>
+    <div class="foot-links">
+      <a routerLink="/cars">Carros Usados</a>
+      <a [routerLink]="['/']" fragment="contactos">Contacto</a>
+      <a href="#">Política de Privacidade</a>
+    </div>
+    <div class="foot-social">
+      <a href="#" aria-label="Facebook" title="Facebook">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.87v-6.98H7.9V12h2.5V9.8c0-2.46 1.47-3.82 3.72-3.82 1.08 0 2.2.19 2.2.19v2.42h-1.24c-1.22 0-1.6.76-1.6 1.54V12h2.72l-.43 2.89h-2.29v6.98A10 10 0 0 0 22 12Z"/></svg>
+      </a>
+      <a href="#" aria-label="Instagram" title="Instagram">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3Zm-5 4a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2.5A2.5 2.5 0 1 0 12 17a2.5 2.5 0 0 0 0-5Zm5.5-2.75a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>

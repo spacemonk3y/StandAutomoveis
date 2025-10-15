@@ -1,0 +1,43 @@
+<section>
+  <h2>Manage Cars</h2>
+  <p *ngIf="loading">Loading...</p>
+  <p *ngIf="error" style="color:crimson">{{ error }}</p>
+
+  <table *ngIf="!loading && cars?.length" style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="text-align:left; padding:.5rem; border-bottom:1px solid #ddd;">ID</th>
+        <th style="text-align:left; padding:.5rem; border-bottom:1px solid #ddd;">Title</th>
+        <th style="text-align:left; padding:.5rem; border-bottom:1px solid #ddd;">Make/Model</th>
+        <th style="text-align:left; padding:.5rem; border-bottom:1px solid #ddd;">Price</th>
+        <th style="text-align:left; padding:.5rem; border-bottom:1px solid #ddd;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let car of cars">
+        <td style="padding:.5rem; border-bottom:1px solid #f0f0f0;">{{ car.id }}</td>
+        <td style="padding:.5rem; border-bottom:1px solid #f0f0f0;">
+          <span *ngIf="car.is_featured" title="Oportunidade da semana" style="color:#f59e0b; margin-right:4px;">★</span>
+          {{ car.title || '-' }}
+        </td>
+        <td style="padding:.5rem; border-bottom:1px solid #f0f0f0;">{{ car.make }} {{ car.model }}</td>
+        <td style="padding:.5rem; border-bottom:1px solid #f0f0f0;">{{ car.price ?? '-' }} {{ car.currency || '' }}</td>
+        <td style="padding:.5rem; border-bottom:1px solid #f0f0f0; display:flex; gap:.5rem;">
+          <a [routerLink]="['/cars', car.id, 'edit']" class="pill">Edit</a>
+          <button class="pill danger" (click)="confirmAndDelete(car)" [disabled]="deleting.has(car.id)">
+            {{ deleting.has(car.id) ? 'Deleting...' : 'Delete' }}
+          </button>
+          <button class="pill" (click)="setAsFeatured(car)" [disabled]="featuring.has(car.id)"
+                  [title]="car.is_featured ? 'Já é oportunidade da semana' : 'Definir como oportunidade da semana'">
+            {{ featuring.has(car.id) ? 'A definir…' : (car.is_featured ? 'Destaque' : 'Definir destaque') }}
+          </button>
+          <button *ngIf="car.is_featured" class="pill" (click)="unfeature(car)" [disabled]="clearing" title="Remover destaque">
+            {{ clearing ? 'A remover…' : 'Remover destaque' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && (!cars || cars.length === 0)">No cars found.</p>
+</section>

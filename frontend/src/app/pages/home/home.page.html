@@ -1,0 +1,245 @@
+<!-- Header anchors target these IDs: inicio, carros, sobre, contactos -->
+
+<!-- Section 1 – Hero -->
+<section id="inicio" class="hero">
+  <div class="hero-media" aria-hidden="true"></div>
+  <div class="hero-content">
+    <h1>O seu próximo carro está aqui</h1>
+    <p class="sub">Mais de 50 veículos com garantia e financiamento disponível</p>
+    <div class="hero-actions">
+      <a mat-flat-button color="primary" routerLink="/cars">Ver Carros</a>
+      <a mat-stroked-button color="primary" href="#contactos">Agendar Test Drive</a>
+    </div>
+  </div>
+  <div class="hero-overlay" aria-hidden="true"></div>
+  <div class="hero-gradient" aria-hidden="true"></div>
+</section>
+
+<!-- Section 2 – Oportunidade da Semana -->
+<div class="home-alt">
+<section id="oportunidade" class="weekly">
+  <div class="section-head">
+    <div class="pill hot">🔥 Oportunidade da Semana</div>
+    <p class="muted">Válido até {{ validUntil }}</p>
+  </div>
+
+  <div class="weekly-card" *ngIf="featured as f; else noFeatured">
+    <div class="w-thumb" [routerLink]="['/cars', f.id]" role="link" tabindex="0">
+      <img *ngIf="f.images?.length; else noFImage" [src]="f.images![0] || ''" alt="featured car image" />
+      <ng-template #noFImage>
+        <svg class="placeholder" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" aria-label="No image available">
+          <defs>
+            <linearGradient id="wgrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#f3f4f6"/>
+              <stop offset="100%" stop-color="#e5e7eb"/>
+            </linearGradient>
+          </defs>
+          <rect width="640" height="360" fill="url(#wgrad)" rx="12"/>
+        </svg>
+      </ng-template>
+      <div class="badge">🔥 Oportunidade</div>
+    </div>
+    <div class="w-meta">
+      <h3>{{ f.title || (f.make + ' ' + f.model) }}</h3>
+      <div class="muted">{{ f.make }} {{ f.model }}</div>
+      <div class="price" *ngIf="f.price != null">{{ f.price }} {{ f.currency || '' }}</div>
+      <div class="actions">
+        <a mat-stroked-button color="primary" [routerLink]="['/cars', f.id]">Ver Detalhes</a>
+      </div>
+    </div>
+  </div>
+  <ng-template #noFeatured>
+    <p class="muted">Sem veículo em destaque no momento.</p>
+  </ng-template>
+</section>
+
+<!-- Section 3 – Pesquisa e Lista de Veículos -->
+<section id="carros" class="search-list">
+  <div class="section-head">
+    <h2>Encontre o seu carro</h2>
+    <p class="muted">Pesquise por marca, modelo, preço e mais</p>
+  </div>
+
+  <form class="filters" (submit)="onSearch(); $event.preventDefault()">
+    <div class="row two-lines">
+      <!-- Line 1 -->
+      <label>
+        <span>Marca</span>
+        <input type="text" [(ngModel)]="make" name="make" placeholder="Ex.: BMW, Audi" aria-label="Marca" />
+      </label>
+      <label>
+        <span>Modelo</span>
+        <input type="text" [(ngModel)]="model" name="model" placeholder="Ex.: A3, Série 1" aria-label="Modelo" />
+      </label>
+      <label>
+        <span>Preço de</span>
+        <input type="number" [(ngModel)]="price_min" name="price_min" inputmode="numeric" placeholder="€" aria-label="Preço mínimo" />
+      </label>
+      <label>
+        <span>Preço até</span>
+        <input type="number" [(ngModel)]="price_max" name="price_max" inputmode="numeric" placeholder="€" aria-label="Preço máximo" />
+      </label>
+
+      <!-- Line 2 -->
+      <ng-container *ngIf="showMoreFilters">
+      <label>
+        <span>Ano de</span>
+        <input type="number" [(ngModel)]="year_min" name="year_min" inputmode="numeric" placeholder="2005" aria-label="Ano mínimo" />
+      </label>
+      <label>
+        <span>Ano até</span>
+        <input type="number" [(ngModel)]="year_max" name="year_max" inputmode="numeric" placeholder="2023" aria-label="Ano máximo" />
+      </label>
+      <label>
+        <span>Ordenar por</span>
+        <select [(ngModel)]="sort" name="sort" aria-label="Ordenar por">
+          <option value="price">Preço</option>
+          <option value="mileage">Quilometragem</option>
+          <option value="year">Ano</option>
+          <option value="id">Recentes</option>
+        </select>
+      </label>
+      <label>
+        <span>Ordem</span>
+        <select [(ngModel)]="direction" name="direction" aria-label="Ordem">
+          <option value="asc">Ascendente</option>
+          <option value="desc">Descendente</option>
+        </select>
+      </label>
+      </ng-container>
+      <div class="actions">
+        <button mat-flat-button color="primary" type="submit">Pesquisar</button>
+        <button mat-stroked-button type="button" (click)="onReset()">Limpar</button>
+        <button mat-stroked-button type="button" (click)="toggleFilters()" [attr.aria-expanded]="showMoreFilters ? 'true' : 'false'">{{ showMoreFilters ? 'Menos filtros' : 'Mais filtros' }}</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="grid" *ngIf="!loading && (cars?.length); else loadingOrEmpty">
+    <mat-card class="car-card" *ngFor="let car of cars">
+      <div class="thumb" [routerLink]="['/cars', car.id]" role="link" tabindex="0">
+        <img *ngIf="car.images?.length; else noImage" [src]="car.images![0] || ''" alt="car image" />
+        <ng-template #noImage>
+          <svg class="placeholder" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" aria-label="No image available">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f3f4f6"/>
+                <stop offset="100%" stop-color="#e5e7eb"/>
+              </linearGradient>
+            </defs>
+            <rect width="200" height="120" fill="url(#grad)" rx="8"/>
+          </svg>
+        </ng-template>
+      </div>
+      <mat-card-content>
+        <h3>{{ car.title || (car.make + ' ' + car.model) }}</h3>
+        <div class="muted">{{ car.make }} {{ car.model }}</div>
+        <div class="price" *ngIf="car.price != null">{{ car.price }} {{ car.currency || '' }}</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-stroked-button color="primary" [routerLink]="['/cars', car.id]">Mais Detalhes</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <ng-template #loadingOrEmpty>
+    <p *ngIf="loading">A carregar veículos…</p>
+    <p *ngIf="!loading" class="muted">Sem resultados por agora.</p>
+  </ng-template>
+
+  <div class="see-all">
+    <a mat-stroked-button color="primary" routerLink="/cars">Ver Todos</a>
+  </div>
+</section>
+
+<!-- Section 4 – Sobre o Stand -->
+<section id="sobre" class="about">
+  <div class="section-head">
+    <h2>Sobre o Stand</h2>
+    <p class="muted">História, confiança e anos de experiência</p>
+  </div>
+  <div class="about-grid">
+    <div>
+      <p>
+        Somos um stand especializado em veículos seminovos e usados, com foco na
+        qualidade, transparência e um serviço de excelência. Acompanhamos todo o
+        processo de compra, incluindo financiamento e garantia.
+      </p>
+      <div class="badges">
+        <span class="badge">Garantia</span>
+        <span class="badge">Financiamento</span>
+        <span class="badge">Parcerias Oficinais</span>
+      </div>
+    </div>
+    <div class="testimonials">
+      <blockquote>
+        “Excelente atendimento e viatura impecável.” — <strong>R. Silva</strong>
+      </blockquote>
+      <blockquote>
+        “Processo rápido e transparente. Recomendo!” — <strong>A. Costa</strong>
+      </blockquote>
+      <blockquote>
+        “Garantia cumprida sem complicações.” — <strong>M. Oliveira</strong>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- Section 5 – Contacto / Como Chegar -->
+<section id="contactos" class="contact">
+  <div class="section-head">
+    <h2>Contactos & Localização</h2>
+    <p class="muted">Fale connosco ou visite-nos</p>
+  </div>
+  <div class="contact-grid">
+    <form class="contact-form" (submit)="$event.preventDefault()">
+      <label>
+        <span>Nome</span>
+        <input type="text" placeholder="O seu nome" required />
+      </label>
+      <label>
+        <span>Telefone</span>
+        <input type="tel" placeholder="Ex.: 912 345 678" required />
+      </label>
+      <label class="full">
+        <span>Mensagem</span>
+        <textarea rows="5" placeholder="Como podemos ajudar?"></textarea>
+      </label>
+      <div class="actions">
+        <button mat-flat-button color="primary" type="submit">Enviar</button>
+      </div>
+      <div class="hours">
+        <div><strong>Horário:</strong> Seg–Sex 9:00–19:00, Sáb 10:00–13:00</div>
+      </div>
+      <div class="quick">
+        <a class="pill" href="#" aria-label="WhatsApp">WhatsApp</a>
+        <a class="pill" href="#" aria-label="Chamada direta">Ligar</a>
+        <a
+          class="pill"
+          href="https://www.google.com/maps/dir/?api=1&destination=38.736946%2C-9.142685"
+          target="_blank"
+          rel="noopener"
+          aria-label="Obter direções para o stand (local fictício)"
+        >Obter Direções</a>
+      </div>
+    </form>
+    <div class="map-wrap">
+      <iframe
+        class="map-frame"
+        title="Localização do Stand (local fictício)"
+        aria-label="Mapa Google com a localização do stand (fictício)"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=38.736946%2C-9.142685&z=14&output=embed"
+      ></iframe>
+      <div class="map-fallback">
+        <a
+          href="https://www.google.com/maps/dir/?api=1&destination=38.736946%2C-9.142685"
+          target="_blank"
+          rel="noopener"
+        >Abrir no Google Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+</div>

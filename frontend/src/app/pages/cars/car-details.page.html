@@ -1,0 +1,93 @@
+<section>
+  <a class="pill" routerLink="/cars">Voltar</a>
+  <h2 style="margin-top: .5rem;">Detalhes do Carro</h2>
+
+  <p *ngIf="loading">A carregar...</p>
+  <p *ngIf="error" style="color:crimson">{{ error }}</p>
+  <ng-container *ngIf="car as c">
+    <div class="meta">
+      <div><strong>Título:</strong> {{ c.title || '-' }}</div>
+      <div><strong>Marca:</strong> {{ c.make || '-' }}</div>
+      <div><strong>Modelo:</strong> {{ c.model || '-' }}</div>
+      <div><strong>Versão:</strong> {{ c.version || '-' }}</div>
+      <div><strong>Preço:</strong> {{ c.price ?? '-' }} {{ c.currency || '' }}</div>
+      <div><strong>Quilometragem:</strong> {{ c.mileage_km ?? '-' }} km</div>
+      <div><strong>Cor:</strong> {{ c.color || '-' }}</div>
+      <div><strong>Caixa:</strong> {{ c.gearbox || '-' }}</div>
+      <div><strong>URL:</strong> <a *ngIf="c.url" [href]="c.url" target="_blank" rel="noopener">Abrir anúncio</a></div>
+    </div>
+
+    <div class="gallery-grid" *ngIf="c.images?.length; else noImages">
+      <!-- Main (large) tile shows a copy of one of the images and rotates -->
+      <div class="tile main" role="img" aria-label="Imagem principal do carro">
+        <img [src]="c.images![(selectedIdx !== null ? selectedIdx : currentIdx)]" alt="imagem do carro" (click)="openOverlay()" />
+        <!-- Navigation arrows (only if multiple images) -->
+        <button *ngIf="c.images!.length > 1" class="nav prev" type="button" (click)="prev()" aria-label="Imagem anterior">&#10094;</button>
+        <button *ngIf="c.images!.length > 1" class="nav next" type="button" (click)="next()" aria-label="Imagem seguinte">&#10095;</button>
+        <!-- Play/Pause toggle -->
+        <button *ngIf="c.images!.length > 1"
+                class="nav toggle"
+                type="button"
+                (click)="togglePause()"
+                [attr.aria-pressed]="selectedIdx !== null ? 'true' : 'false'"
+                [attr.aria-label]="selectedIdx !== null ? 'Retomar apresentação' : 'Pausar apresentação'">
+          <span *ngIf="selectedIdx !== null">&#9658;</span>
+          <span *ngIf="selectedIdx === null">&#10074;&#10074;</span>
+        </button>
+      </div>
+
+      <!-- Thumbnails: show all images, allow click to set as main -->
+      <button class="tile thumb" type="button"
+              *ngFor="let src of (c.images | slice:0:thumbLimit); let i = index"
+              [class.active]="selectedIdx === i"
+              (click)="go(i, $event)"
+              aria-label="Mostrar imagem">
+        <img [src]="src" alt="miniatura da imagem do carro" />
+      </button>
+
+      <!-- +N more tile -->
+      <button *ngIf="c.images!.length > thumbLimit" class="tile more" type="button" (click)="openOverlay(thumbLimit)" aria-label="Abrir galeria">
+        <span class="more-label">+{{ c.images!.length - thumbLimit }}</span>
+      </button>
+    </div>
+    <ng-template #noImages>
+      <svg class="placeholder" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" aria-label="Sem imagem disponível">
+        <defs>
+          <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#f3f4f6"/>
+            <stop offset="100%" stop-color="#e5e7eb"/>
+          </linearGradient>
+        </defs>
+        <rect width="200" height="120" fill="url(#grad2)" rx="8"/>
+        <g fill="#9ca3af">
+          <path d="M60 85h80a5 5 0 0 0 5-5V40a5 5 0 0 0-5-5H60a5 5 0 0 0-5 5v40a5 5 0 0 0 5 5zm0-10 20-20 15 15 10-10 35 35H60z"/>
+          <circle cx="115" cy="55" r="7"/>
+        </g>
+      </svg>
+    </ng-template>
+
+    <!-- Edit button removed to keep details read-only -->
+  </ng-container>
+
+  <!-- Lightbox overlay -->
+  <div class="lightbox" *ngIf="overlayOpen" (click)="closeOverlay()" role="dialog" aria-modal="true" aria-label="Galeria de imagens do carro">
+    <div class="lb-content" (click)="$event.stopPropagation()">
+      <button class="lb-btn close" type="button" (click)="closeOverlay()" aria-label="Fechar">&#10005;</button>
+      <button *ngIf="(car?.images?.length ?? 0) > 1" class="lb-btn prev" type="button" (click)="overlayPrev()" aria-label="Anterior">&#10094;</button>
+      <div class="lb-stage" [class.grid]="overlayGrid">
+        <ng-container *ngIf="!overlayGrid; else gridMode">
+          <img [src]="car!.images![overlayIdx]" alt="imagem grande do carro" />
+        </ng-container>
+        <ng-template #gridMode>
+          <div class="lb-grid">
+            <button type="button" *ngFor="let src of car!.images; let i = index" (click)="overlayIdx = i; overlayGrid = false" aria-label="Ver imagem">
+              <img [src]="src" alt="imagem do carro" />
+            </button>
+          </div>
+        </ng-template>
+      </div>
+      <button *ngIf="(car?.images?.length ?? 0) > 1" class="lb-btn next" type="button" (click)="overlayNext()" aria-label="Seguinte">&#10095;</button>
+      <button *ngIf="(car?.images?.length ?? 0) > 1" class="lb-btn grid" type="button" (click)="toggleOverlayGrid()" [attr.aria-pressed]="overlayGrid ? 'true' : 'false'" aria-label="Alternar vista em grelha">&#9638;</button>
+    </div>
+  </div>
+</section>
